@@ -1,7 +1,17 @@
 ﻿@page "/"
 
-<h1>Hello, world!</h1>
+@inject IJSRuntime JSRuntime
 
-Welcome to your new app.
+<h1>Display Google Map</h1>
+<div id="map" style="height:500px;width:100%;">
+</div>
 
-<SurveyPrompt Title="How is Blazor working for you?" />
+@code{
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await JSRuntime.InvokeVoidAsync("initialize", null);
+        }
+    }
+}
