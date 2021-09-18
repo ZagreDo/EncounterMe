@@ -8,25 +8,26 @@
 
 <h1>Google Map</h1>
 <div style="height:1000px;width:100%;">
-    <GoogleMap @ref="@map1" Id="map1" Options="@mapOptions" Height="100%"></GoogleMap>
-    <button @onclick="AddMarker">Add marker</button>
+    <GoogleMap @ref="@map1" Id="map1" Options="@mapOptions" Height="100%" OnAfterInit="async () => await OnAfterMapInit()"></GoogleMap>
 </div>
 @functions {
 
     private GoogleMap map1 = default;
+    private MapOptions mapOptions;
 
-
-    private MapOptions mapOptions = new MapOptions()
+    protected override void OnInitialized()
     {
-        Zoom = 14,
-        Center = new LatLngLiteral()
+        mapOptions = new MapOptions()
         {
-            Lat = 54.69,
-            Lng = 25.28
-        },
-        MapTypeId = MapTypeId.Terrain,
-        StreetViewControl = false,
-        Styles = new MapTypeStyle[]
+            Zoom = 14,
+            Center = new LatLngLiteral()
+            {
+                Lat = 54.69,
+                Lng = 25.28
+            },
+            MapTypeId = MapTypeId.Terrain,
+            StreetViewControl = false,
+            Styles = new MapTypeStyle[]
         {
             //Hides markers of places of interest
             new MapTypeStyle()
@@ -39,11 +40,28 @@
                         visibility = "off"
                     }
                 }
+            },
+            new MapTypeStyle()
+            {
+                featureType = "transit",
+                stylers = new GoogleMapStyleVisibility[]
+                {
+                    new GoogleMapStyleVisibility()
+                    {
+                        visibility = "off"
+                    }
+                }
             }
         }
-    };
+        };
+    }
 
+    private async Task OnAfterMapInit()
+    {
+        await AddMarker();
+    }
 
+    //TODO get position and content from argument
     private async Task AddMarker()
     {
         var marker = await Marker.CreateAsync(map1.JsRuntime,
@@ -73,6 +91,7 @@
             Position = await map1.InteropObject.GetCenter()
         });
 
+        //test garbage text
         var infoWindowContent = "<div id=content>" +
                 "<div id=siteNotice>" +
                 "</div>" +
@@ -88,6 +107,5 @@
             await infoWindow.SetPosition(position);
             await infoWindow.Open(map1.InteropObject);
         });
-
     }
 }
