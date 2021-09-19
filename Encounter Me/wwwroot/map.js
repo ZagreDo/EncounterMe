@@ -5,6 +5,8 @@ function initialize() {
         mapTypeId: google.maps.MapTypeId.ROADMAP
     };
     var map = new google.maps.Map(document.getElementById("map"), options);
+    map.data.loadGeoJson('Iki Akropolio.geojson');
+
 
     const image = "footprint.png";
 
